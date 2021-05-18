@@ -27,9 +27,10 @@ class _HomePageState extends State<HomePage> {
     });
     classifyImg(_image!);
   }
+
   Future getGalleryImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
+    print(pickedFile);
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
@@ -50,24 +51,23 @@ class _HomePageState extends State<HomePage> {
       imageStd: 127.5,
     );
     setState(() {
-      if(_output.length > 0) {
+      if (_output.length > 0) {
         _output.removeLast();
       }
       _output.addAll(output!);
     });
   }
-  
+
   loadModel() async {
-    await Tflite.loadModel(model: 'assets/model_unquant.tflite', labels: 'assets/labels.txt');
+    await Tflite.loadModel(
+        model: 'assets/model_unquant.tflite', labels: 'assets/labels.txt');
   }
 
   @override
   void initState() {
     super.initState();
     loadModel().then((value) {
-      setState(() {
-
-      });
+      setState(() {});
     });
   }
 
@@ -81,18 +81,24 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: Text('Dog vs Cat'),
+        ),
         body: Container(
           width: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-            _image != null ? Image.file(_image!) : Container(),
-            _output.length > 0? Text('${_output[0]['label'] == '0 DOG' ? 'Dog' : 'Cat'}') : Container(),
-            _output.length > 0? Text('${_output[0]}') : Container(),
-            ElevatedButton(onPressed: getImage, child: Text('사진찍기')),
-            ElevatedButton(onPressed: getGalleryImage, child: Text('사진불러오기')),
-          ],),
+              _image != null ? Image.file(_image!) : Container(),
+              _output.length > 0
+                  ? Text('${_output[0]['label'] == '0 DOG' ? 'Dog' : 'Cat'}')
+                  : Container(),
+              _output.length > 0 ? Text('${_output[0]}') : Container(),
+              ElevatedButton(onPressed: getImage, child: Text('사진찍기')),
+              ElevatedButton(onPressed: getGalleryImage, child: Text('사진불러오기')),
+            ],
+          ),
         ),
       ),
     );
